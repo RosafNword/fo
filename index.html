@@ -1,201 +1,216 @@
+<!DOCTYPE html>
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="./assets/index.css">
-    <link rel="icon" type="image/x-icon" href="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4=w240-h480-rw">
     <title>mObywatel</title>
-    <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
     <style>
-        .login-overlay {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .header-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo_text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #024A94;
+        }
+        .input_holder {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .placeholder {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            color: #999;
+            pointer-events: none;
+            transition: all 0.3s;
+            background: white;
+            padding: 0 5px;
+        }
+        .input:focus + .placeholder,
+        .input:not(:placeholder-shown) + .placeholder {
+            top: -10px;
+            font-size: 12px;
+            color: #024A94;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .generate-btn, .clear-btn, .go {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #024A94;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .go {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .selector_box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .selected_grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option_box {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+            z-index: 10;
+        }
+        .selector_option {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .selector_option:hover {
+            background-color: #f5f5f5;
+        }
+        .selector_open .option_box {
+            display: block;
+        }
+        .date_grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .date_input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .top_info {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .image-preview-modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #024A94, #0367c4);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
             justify-content: center;
-        }
-        .login-container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 20px;
-            width: 85%;
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        .login-logo {
-            display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 25px;
         }
-        .login-logo img {
-            width: 60px;
-            height: auto;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
-        .login-logo span {
-            margin-left: 15px;
-            font-weight: 700;
-            font-size: 32px;
-            color: #024A94;
-        }
-        .login-welcome {
-            font-weight: 700;
-            font-size: 34px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #1a1a1a;
-        }
-        .login-box {
-            margin: 15px 0;
-        }
-        .login-box label {
-            display: block;
-            margin-bottom: 8px;
-            color: #666;
-            font-size: 14px;
-        }
-        .login-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e1e1e1;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-            box-sizing: border-box;
-        }
-        .login-input:focus {
-            border-color: #024A94;
-            outline: none;
+        .image-preview-content {
             background: white;
-        }
-        .login-btn {
-            background: #024A94;
-            color: white;
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            margin-top: 25px;
-            cursor: pointer;
-            transition: transform 0.2s ease, background 0.3s ease;
-        }
-        .login-btn:hover {
-            background: #0367c4;
-            transform: translateY(-2px);
-        }
-        .login-btn:active {
-            transform: translateY(0);
-        }
-        .error-message {
-            color: #dc3545;
-            display: none;
-            margin-top: 12px;
-            text-align: center;
-            font-size: 14px;
-            padding: 8px;
-            background: #fff1f1;
+            padding: 20px;
             border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 80vh;
+        }
+        .close-preview {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .upload-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            height: 24px;
+        }
+        .local-image-selector {
+            margin-top: 10px;
+            display: none;
+        }
+        .local-image-selector select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
-    <div class="login-overlay" id="loginOverlay">
-        <div class="login-container">
-            <div class="login-logo">
-                <img src="https://i.imgur.com/wEDerI2.png">
-                <span>mObywatel</span>
-            </div>
-            <h1 class="login-welcome">Dzień dobry!</h1>
-            <div class="login-box">
-                <label for="password">Hasło:</label>
-                <input type="password" id="password" class="login-input">
-                <p id="error" class="error-message">Nieprawidłowe hasło</p>
-            </div>
-            <button class="login-btn" onclick="checkPassword()">Zaloguj się</button>
-        </div>
+    <div class="header-container">
+        <p class="logo_text">mObywatel</p>
     </div>
-    <script>
-        function checkPassword() {
-            const password = document.getElementById('password').value;
-            const error = document.getElementById('error');
-            const overlay = document.getElementById('loginOverlay');
-            
-            if (password === '1234') {
-                overlay.style.display = 'none';
-            } else {
-                error.style.display = 'block';
-            }
-        }
-
-        // Update welcome message based on time of day
-        const hour = new Date().getHours();
-        if (hour >= 18) {
-            document.querySelector('.login-welcome').textContent = 'Dobry wieczór!';
-        }
-
-        // Prevent access to main content
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-            }
-        });
-    </script>
-    <div class="theme-toggle">
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+    
+    <div class="button-container">
+        <a class="generate-btn">Generuj</a>
+        <a class="clear-btn">Wyczyść</a>
     </div>
-    <div class="theme-panel">
-        <h3>Wybierz motyw</h3>
-        <div class="theme-options">
-            <div class="theme-option" data-theme="default">
-                <div class="color-preview"></div>
-                <span>Domyślny</span>
-            </div>
-            <div class="theme-option" data-theme="dark">
-                <div class="color-preview"></div>
-                <span>Ciemny</span>
-            </div>
-            <div class="theme-option" data-theme="neon">
-                <div class="color-preview"></div>
-                <span>Neon</span>
-            </div>
-            <div class="theme-option" data-theme="gradient">
-                <div class="color-preview"></div>
-                <span>Gradient</span>
-            </div>
-        </div>
-    </div>
-    <img src="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4" class="logo">
-
-<div class="header-container">
-    <p class="logo_text">mObywatel</p>
-</div>
-<div class="button-container">
-    <a class="generate-btn">Generuj</a>
-    <a class="clear-btn">Wyczyść</a>
-</div>
 
     <p class="warning">Uwaga! Strona służy wyłącznie do generowania atrap dowodów osobistych w celach rozrywkowych. Wygenerowane dokumenty nie mają wartości prawnej i nie mogą być używane jako dokument tożsamości. Autor strony nie ponosi żadnej odpowiedzialności za niewłaściwe wykorzystanie narzędzia.</p>
 
     <div class="input_holder">
         <div class="input-wrapper">
-            <input type="text" id="image" class="input" placeholder="">
-            <img src="assets/images/unnamed.png" class="upload-icon" onclick="document.getElementById('file-upload').click()">
+            <input type="text" id="image" class="input" placeholder="" readonly>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXVwbG9hZCI+PHBhdGggZD0iTTIxIDE1djRhMiAyIDAgMCAxLTIgSDVhMiAyIDAgMCAxLTItMnYtNCI+PC9wYXRoPjxwb2x5bGluZSBwb2ludHM9IjE3IDggMTIgMyA3IDgiPjwvcG9seWxpbmU+PGxpbmUgeDE9IjEyIiB4Mj0iMTIiIHkxPSIzIiB5Mj0iMTUiPjwvbGluZT48L3N2Zz4=" class="upload-icon" onclick="showImageOptions()">
         </div>
-        <span class="placeholder">Link do zdjęcia (catbox.moe)</span>
+        <span class="placeholder">Wybierz zdjęcie</span>
         <p class="error">To pole jest wymagane</p>
-        <input type="file" id="file-upload" accept="image/*" style="display: none">
+        
+        <div class="local-image-selector" id="localImageSelector">
+            <select id="localImageSelect">
+                <option value="">-- Wybierz zdjęcie --</option>
+                <!-- Opcje zostaną wypełnione przez JavaScript -->
+            </select>
+        </div>
     </div>
 
     <div class="image-preview-modal">
@@ -221,7 +236,7 @@
     <div class="selector_box">
         <div class="selected_grid">
             <p class="selector_text selected_text">Mężczyzna</p>
-            <img class="selected_arrow" src="https://i.imgur.com/RXsdBB6.png">
+            <img class="selected_arrow" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZXZyb24tZG93biI+PHBhdGggZD0ibTYgOSA2IDYgNi02Ii8+PC9zdmc+" width="20">
         </div>
         <div class="option_box">
             <div class="selector_option" id="m">
@@ -236,15 +251,9 @@
     <div class="date">
         <p class="top_info">Data urodzenia</p>
         <div class="date_grid">
-            <input class="date_input" placeholder="DD" type="number">
-
-            </input>
-            <input class="date_input" placeholder="MM" type="number">
-
-            </input>
-            <input class="date_input" placeholder="YYYY" type="number">
-
-            </input>
+            <input class="date_input" placeholder="DD" type="number" min="1" max="31">
+            <input class="date_input" placeholder="MM" type="number" min="1" max="12">
+            <input class="date_input" placeholder="YYYY" type="number" min="1900" max="2100">
         </div>
         <p class="error">Wprowadź prawidłową datę</p>
     </div>
@@ -305,127 +314,45 @@
         <p class="error">To pole jest wymagane</p>
     </div>
 
-    <a class="go">wejdź</a>
+    <a class="go">Generuj dowód</a>
 
     <script>
-        const themeToggle = document.querySelector('.theme-toggle');
-        const themePanel = document.querySelector('.theme-panel');
+        // Zmienne globalne
+        let sex = "m";
+        const previewModal = document.querySelector('.image-preview-modal');
+        const previewImage = document.querySelector('.preview-image');
+        const closePreview = document.querySelector('.close-preview');
 
-        themeToggle.addEventListener('mouseenter', () => {
-            themePanel.classList.add('active');
-        });
-
-        themePanel.addEventListener('mouseleave', () => {
-            themePanel.classList.remove('active');
-        });
-
-        document.querySelectorAll('.theme-option').forEach(option => {
-            option.addEventListener('click', () => {
-                document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-                const theme = option.getAttribute('data-theme');
-                applyTheme(theme);
-            });
-        });
-
-        function applyTheme(theme) {
-            const root = document.documentElement;
-            
-            switch(theme) {
-                case 'dark':
-                    root.style.setProperty('--main-color', '#ffffff');
-                    document.body.style.background = '#1a1a1a';
-                    break;
-                case 'neon':
-                    root.style.setProperty('--main-color', '#00ff00');
-                    document.body.style.backgroundColor = '#000000';
-                    document.querySelectorAll('.theme-option').forEach(opt => {
-                        opt.style.animation = 'glow 2s infinite';
-                    });
-                    break;
-                case 'gradient':
-                    document.body.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
-                    root.style.setProperty('--main-color', '#ffffff');
-                    break;
-                default:
-                    root.style.setProperty('--main-color', 'rgb(41, 41, 41)');
-                    document.body.style.backgroundColor = 'white';
-                    document.querySelectorAll('.theme-option').forEach(opt => {
-                        opt.style.animation = 'none';
-                    });
-            }
-        }
-
-        var selector = document.querySelector(".selector_box");
+        // Inicjalizacja selektora płci
+        const selector = document.querySelector(".selector_box");
         selector.addEventListener('click', () => {
-            if (selector.classList.contains("selector_open")){
-                selector.classList.remove("selector_open")
-            }else{
-                selector.classList.add("selector_open")
-            }
-        })
-
-        document.querySelectorAll(".date_input").forEach((element) => {
-            element.addEventListener('click', () => {
-                document.querySelector(".date").classList.remove("error_shown")
-            })
-        })
-
-        var sex = "m"
+            selector.classList.toggle("selector_open");
+        });
 
         document.querySelectorAll(".selector_option").forEach((option) => {
             option.addEventListener('click', () => {
                 sex = option.id;
-                document.querySelector(".selected_text").innerHTML = option.innerHTML;
-            })
-        })
-
-        const input = document.querySelector("#image");
-        const previewModal = document.querySelector('.image-preview-modal');
-        const previewImage = document.querySelector('.preview-image');
-        const closePreview = document.querySelector('.close-preview');
-        const fileUpload = document.querySelector("#file-upload");
-
-        // Catbox file upload handler
-        fileUpload.addEventListener('change', async (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const formData = new FormData();
-            formData.append('reqtype', 'fileupload');
-            formData.append('userhash', '');
-            formData.append('fileToUpload', file);
-
-            try {
-                const response = await fetch('https://catbox.moe/user/api.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    const imageUrl = await response.text();
-                    input.value = imageUrl;
-                    previewImage.src = imageUrl;
-                    previewModal.style.display = 'flex';
-                } else {
-                    alert('Błąd podczas przesyłania zdjęcia');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Błąd podczas przesyłania zdjęcia');
-            }
+                document.querySelector(".selected_text").textContent = option.textContent;
+                selector.classList.remove("selector_open");
+            });
         });
 
-        input.addEventListener('input', (event) => {
-            const imageUrl = event.target.value;
-            if (imageUrl.includes('catbox.moe') || imageUrl.includes('imgur.com')) {
-                localStorage.removeItem('userImage');
-                input.setAttribute("selected", imageUrl);
-                previewImage.src = imageUrl;
-                previewModal.style.display = 'flex';
-            }
+        // Obsługa daty
+        document.querySelectorAll(".date_input").forEach((element) => {
+            element.addEventListener('click', () => {
+                document.querySelector(".date").classList.remove("error_shown");
+            });
         });
 
+        // Obsługa błędów w inputach
+        document.querySelectorAll(".input_holder").forEach((element) => {
+            const input = element.querySelector(".input");
+            input.addEventListener('click', () => {
+                element.classList.remove("error_shown");
+            });
+        });
+
+        // Obsługa podglądu zdjęcia
         closePreview.addEventListener('click', () => {
             previewModal.style.display = 'none';
         });
@@ -436,6 +363,7 @@
             }
         });
 
+        // Listy przykładowych danych
         const randomMaleSurnames = ["Kowalski", "Nowak", "Wiśniewski", "Wójcik", "Kowalczyk", "Kamiński", "Lewandowski", "Zieliński", "Szymański", "Woźniak"];
         const randomFemaleSurnames = ["Kowalska", "Nowak", "Wiśniewska", "Wójcik", "Kowalczyk", "Kamińska", "Lewandowska", "Zielińska", "Szymańska", "Woźniak"];
         const randomCities = ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin", "Bydgoszcz", "Lublin", "Katowice"];
@@ -446,31 +374,20 @@
         }
 
         function generateRandomPostcode() {
-            return String(Math.floor(Math.random() * 90 + 10)) + "-" + String(Math.floor(Math.random() * 900 + 100));
+            return `${Math.floor(Math.random() * 90 + 10)}-${Math.floor(Math.random() * 900 + 100)}`;
         }
 
-        document.querySelector(".clear-btn").addEventListener('click', () => {
-            document.querySelectorAll(".input_holder").forEach((element) => {
-                var input = element.querySelector(".input");
-                input.value = '';
-            });
-            
-            document.querySelectorAll(".date_input").forEach((element) => {
-                element.value = '';
-            });
-            
-            localStorage.clear();
-        });
-
+        // Funkcja do wypełniania losowymi danymi
         document.querySelector(".generate-btn").addEventListener('click', () => {
             document.querySelectorAll(".input_holder").forEach((element) => {
-                var input = element.querySelector(".input");
+                const input = element.querySelector(".input");
                 let randomValue = "";
                 switch(input.id) {
                     case "surname":
                         randomValue = sex === "m" ? getRandomElement(randomMaleSurnames) : getRandomElement(randomFemaleSurnames);
                         break;
                     case "nationality":
+                    case "countryOfBirth":
                         randomValue = "POLSKA";
                         break;
                     case "familyName":
@@ -483,99 +400,145 @@
                         randomValue = getRandomElement(randomFemaleSurnames);
                         break;
                     case "birthPlace":
+                    case "city":
                         randomValue = getRandomElement(randomCities);
                         break;
-                    case "countryOfBirth":
-                        randomValue = "POLSKA";
-                        break;
                     case "adress1":
-                        randomValue = "ul. " + getRandomElement(randomStreets) + " " + Math.floor(Math.random() * 100 + 1);
+                        randomValue = `ul. ${getRandomElement(randomStreets)} ${Math.floor(Math.random() * 100 + 1)}`;
                         break;
                     case "adress2":
                         randomValue = generateRandomPostcode();
                         break;
-                    case "city":
-                        randomValue = getRandomElement(randomCities);
-                        break;
                 }
-                if (randomValue && input.id !== "name") {
+                if (randomValue && input.id !== "name" && input.id !== "image") {
                     input.value = randomValue;
                 }
             });
+
+            // Wypełnij datę urodzenia
+            const day = Math.floor(Math.random() * 28 + 1);
+            const month = Math.floor(Math.random() * 12 + 1);
+            const year = Math.floor(Math.random() * 30 + 1970);
+            document.querySelectorAll(".date_input")[0].value = day;
+            document.querySelectorAll(".date_input")[1].value = month;
+            document.querySelectorAll(".date_input")[2].value = year;
         });
 
-        document.querySelector(".go").addEventListener('click', () => {
-            var empty = [];
-            var params = new URLSearchParams();
-            params.set("sex", sex)
+        // Funkcja czyszczenia formularza
+        document.querySelector(".clear-btn").addEventListener('click', () => {
+            document.querySelectorAll(".input").forEach(input => input.value = '');
+            document.querySelectorAll(".date_input").forEach(input => input.value = '');
+            localStorage.removeItem('userImageData');
+        });
+
+        // Funkcja do wyboru zdjęcia z lokalnego folderu
+        async function showImageOptions() {
+            const selector = document.getElementById('localImageSelector');
+            const select = document.getElementById('localImageSelect');
             
-            const imageInput = document.querySelector("#image");
-            if (!imageInput.value || !(imageInput.value.includes('catbox.moe') || imageInput.value.includes('imgur.com'))){
-                empty.push(imageInput.parentElement);
-                imageInput.parentElement.classList.add("error_shown");
+            // W praktyce przeglądarki nie pozwalają na bezpośredni dostęp do systemu plików,
+            // więc symulujemy to przez stałą listę obrazów w folderze /assets/images/
+            const localImages = [
+                'example1.jpg',
+                'example2.png',
+                'profile.jpg'
+            ];
+            
+            // Wyczysc poprzednie opcje
+            select.innerHTML = '<option value="">-- Wybierz zdjęcie --</option>';
+            
+            // Dodaj obrazy do selecta
+            localImages.forEach(image => {
+                const option = document.createElement('option');
+                option.value = `assets/images/${image}`;
+                option.textContent = image;
+                select.appendChild(option);
+            });
+            
+            // Pokaz selektor
+            selector.style.display = 'block';
+        }
+
+        // Obsługa wyboru zdjęcia
+        document.getElementById('localImageSelect').addEventListener('change', function() {
+            const imagePath = this.value;
+            if (imagePath) {
+                document.getElementById('image').value = imagePath;
+                previewImage.src = imagePath;
+                previewModal.style.display = 'flex';
+                
+                // Zapisz ścieżkę do obrazu
+                localStorage.setItem('userImagePath', imagePath);
+            }
+            document.getElementById('localImageSelector').style.display = 'none';
+        });
+
+        // Funkcja sprawdzająca czy pole jest puste
+        function isEmpty(value) {
+            return !value || /^\s*$/.test(value);
+        }
+
+        // Funkcja generująca dowód
+        document.querySelector(".go").addEventListener('click', () => {
+            let emptyFields = [];
+            const params = new URLSearchParams();
+            params.set("sex", sex);
+            
+            // Sprawdź zdjęcie
+            const imageInput = document.getElementById('image');
+            if (isEmpty(imageInput.value)) {
+                emptyFields.push(imageInput.parentElement.parentElement);
+                imageInput.parentElement.parentElement.classList.add("error_shown");
             } else {
                 params.set("image", imageInput.value);
             }
 
-            var birthday = "";
-            var dateEmpty = false;
+            // Sprawdź datę urodzenia
+            let birthday = "";
+            let dateEmpty = false;
             document.querySelectorAll(".date_input").forEach((element) => {
-                birthday = birthday + "." + element.value
-                if (isEmpty(element.value)){
+                birthday += "." + element.value;
+                if (isEmpty(element.value)) {
                     dateEmpty = true;
                 }
-            })
+            });
 
-            birthday = birthday.substring(1);
-
-            if (dateEmpty){
-                var dateElement = document.querySelector(".date");
+            if (dateEmpty) {
+                const dateElement = document.querySelector(".date");
                 dateElement.classList.add("error_shown");
-                empty.push(dateElement);
-            }else{
-                params.set("birthday", birthday)
+                emptyFields.push(dateElement);
+            } else {
+                params.set("birthday", birthday.substring(1));
             }
 
+            // Sprawdź pozostałe pola
             document.querySelectorAll(".input_holder").forEach((element) => {
-                var input = element.querySelector(".input");
-                if (isEmpty(input.value)) {
-                    empty.push(element);
+                const input = element.querySelector(".input");
+                if (isEmpty(input.value) && input.id !== "image") {
+                    emptyFields.push(element);
                     element.classList.add("error_shown");
-                } else {
+                } else if (input.id !== "image") {
                     params.set(input.id, input.value);
                 }
             });
 
-            if (empty.length != 0){
-                empty[0].scrollIntoView();
-            }else{
-                forwardToId(params);
+            if (emptyFields.length > 0) {
+                emptyFields[0].scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // Zapisz dane w localStorage
+                document.querySelectorAll(".input_holder").forEach((element) => {
+                    const input = element.querySelector(".input");
+                    if (input && input.value) {
+                        localStorage.setItem(input.id, input.value);
+                    }
+                });
+                
+                // Przekieruj do strony z dowodem
+                window.location.href = "id.html?" + params.toString();
             }
         });
 
-        function isEmpty(value){
-            let pattern = /^\s*$/
-            return pattern.test(value);
-        }
-
-        function forwardToId(params){
-            const imageData = params.get('image');
-            
-            if (imageData) {
-                localStorage.setItem('userImage', imageData);
-                params.delete('image');
-            }
-            
-            document.querySelectorAll(".input_holder").forEach((element) => {
-                const input = element.querySelector(".input");
-                if (input && input.value) {
-                    localStorage.setItem(input.id, input.value);
-                }
-            });
-            
-            location.href = "./id.html?" + params.toString();
-        }
-
+        // Przywróć zapisane dane przy ładowaniu strony
         window.addEventListener('load', () => {
             document.querySelectorAll(".input_holder").forEach((element) => {
                 const input = element.querySelector(".input");
@@ -583,6 +546,12 @@
                     input.value = localStorage.getItem(input.id);
                 }
             });
+            
+            // Przywróć zdjęcie jeśli było zapisane
+            if (localStorage.getItem('userImagePath')) {
+                document.getElementById('image').value = localStorage.getItem('userImagePath');
+            }
         });
     </script>
 </body>
+</html>
