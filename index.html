@@ -1,266 +1,565 @@
+<!DOCTYPE html>
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="assets/index.css">
-    <link rel="icon" type="image/x-icon" href="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4=w240-h480-rw">
-    <title>mObywatel</title>
     <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
+    <title>mObywatel</title>
+    <link rel="icon" type="image/x-icon" href="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4=w240-h480-rw">
+    <style>
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* STYLE WERYFIKACJI - FULL RESPONSIVE */
+        .access-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: white;
+            padding: 20px;
+        }
+        
+        .access-modal {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .access-logo {
+            width: clamp(60px, 15vw, 80px);
+            margin-bottom: clamp(10px, 3vw, 20px);
+        }
+        
+        .access-title {
+            font-size: clamp(22px, 6vw, 28px);
+            margin-bottom: clamp(10px, 3vw, 15px);
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .access-text {
+            font-size: clamp(14px, 4vw, 16px);
+            line-height: 1.6;
+            margin-bottom: clamp(15px, 5vw, 25px);
+            opacity: 0.9;
+        }
+        
+        .access-code-container {
+            margin: clamp(15px, 5vw, 25px) 0;
+        }
+        
+        .access-code-input {
+            padding: clamp(12px, 3vw, 15px) clamp(15px, 4vw, 20px);
+            width: 100%;
+            max-width: 300px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: clamp(16px, 4vw, 18px);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .access-code-input:focus {
+            border-color: #4a90e2;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .access-btn {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: clamp(12px, 3vw, 15px) clamp(20px, 5vw, 30px);
+            border-radius: 10px;
+            font-size: clamp(14px, 4vw, 16px);
+            font-weight: 600;
+            cursor: pointer;
+            margin: clamp(8px, 2vw, 10px) auto;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            width: auto;
+        }
+        
+        .access-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .access-contact {
+            margin-top: clamp(20px, 5vw, 30px);
+            padding: clamp(15px, 4vw, 20px);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        .access-contact-title {
+            font-size: clamp(16px, 4vw, 18px);
+            margin-bottom: clamp(10px, 3vw, 15px);
+            font-weight: 500;
+        }
+        
+        .access-contact-method {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: clamp(8px, 2vw, 10px) 0;
+            font-size: clamp(14px, 4vw, 16px);
+        }
+        
+        .access-contact-icon {
+            width: clamp(18px, 5vw, 22px);
+            height: clamp(18px, 5vw, 22px);
+            margin-right: 10px;
+            object-fit: contain;
+        }
+        
+        .access-error {
+            color: #ff6b6b;
+            margin: clamp(10px, 3vw, 15px) 0;
+            display: none;
+            font-size: clamp(13px, 3vw, 14px);
+        }
+        
+        /* Instagram specific styles */
+        .instagram-contact {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Media queries for very small devices */
+        @media (max-width: 350px) {
+            .access-modal {
+                padding: 15px;
+            }
+            .access-contact-method {
+                flex-direction: column;
+                text-align: center;
+            }
+            .access-contact-icon {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <img src="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4" class="logo">
-    <p class="logo_text">FmOBywatel 📲</p>
-    <div class="guide_holder">
-        <div class="top_holder">
-            <p class="guide_title">Instrukcja</p>
-            <img class="arrow" src="images/1GUMnTn.png">
-        </div>
-        <div class="guide_text">
-            <span style="font-size: 17px; font-weight: 500;">Dla systemu IOS:</span><br>
-            <ul>
-                <li>Upewnij się, że używasz przeglądarki Safari</li>
-                <li>Uzupełnij dane i kliknij wejdź</li>
-                <li>Naciśji udostępnij -> Do Ekranu głównego</li>
-            </ul>
-            <span style="font-size: 17px; font-weight: 500;">Dla systemu Android:</span>
-            <ul>
-                <li>Upewnij się, że używasz przeglądarki google lub chrome</li>
-                <li>Uzupełnij dane i kliknij wejdź</li>
-                <li>Naciśji 3 kropki -> Dodaj do ekranu głównego</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="upload">
-        <p class="error">To pole jest wymagane</p>
-        <img class="upload_uploaded">
-        <div class="upload_uploading"></div>
-        <div class="upload_grid">
+    <!-- EKRAN WERYFIKACJI -->
+    <div class="access-overlay" id="accessOverlay">
+        <div class="access-modal">
+            <img src="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4=w240-h480-rw" class="access-logo">
+            <h1 class="access-title">WERYFIKACJA DOSTĘPU</h1>
+            <p class="access-text">Aby uzyskać dostęp do aplikacji mObywatel, wprowadź kod dostępu otrzymany od administratora.</p>
             
-            <p class="upload_text">Dodaj zdjęcie</p>
-        </div>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="name" class="input" placeholder="">
-        <span class="placeholder">Imię (imiona)</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
- 
-    <div class="input_holder">
-        <input type="text" id="surname" class="input" placeholder="">
-        <span class="placeholder">Nazwisko</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <p class="top_info">Płeć</p>
-    <div class="selector_box">
-        <div class="selected_grid">
-            <p class="selector_text selected_text">Mężczyzna</p>
-            <img class="selected_arrow" src="images/1GUMnTn.png">
-        </div>
-        <div class="option_box">
-            <div class="selector_option" id="m">
-                Mężczyzna
+            <div class="access-code-container">
+                <input type="text" class="access-code-input" id="accessCode" placeholder="Wprowadź kod dostępu">
+                <p class="access-error" id="codeError">Nieprawidłowy kod dostępu. Spróbuj ponownie.</p>
             </div>
-            <div class="selector_option" id="k">
-                Kobieta
+            
+            <button class="access-btn" id="verifyCode">ZWERYFIKUJ</button>
+            
+            <div class="access-contact">
+                <p class="access-contact-title">Nie masz kodu dostępu? Skontaktuj się:</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/768px-Instagram_logo_2016.svg.png" class="access-contact-icon"> Instagram: fobywatei
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="date">
-        <p class="top_info">Data urodzenia</p>
-        <div class="date_grid">
-            <input class="date_input" placeholder="DD" type="number">
-    
-            </input>
-            <input class="date_input" placeholder="MM" type="number">
-    
-            </input>
-            <input class="date_input" placeholder="YYYY" type="number">
-    
-            </input>
+    <!-- GŁÓWNA ZAWARTOŚĆ STRONY -->
+    <div class="main-content" id="mainContent">
+        <img src="https://play-lh.googleusercontent.com/_TNbiYKasPy_isTSEg2_UEzVaev4F8fO2lLunsHJ8_Ux2g3OzkSZyzpqvJG1woSj-WD4" class="logo">
+        <p class="logo_text">FmOBywatel 📲</p>
+        
+        <div class="guide_holder">
+            <div class="top_holder">
+                <p class="guide_title">Instrukcja</p>
+                <img class="arrow" src="images/1GUMnTn.png">
+            </div>
+            <div class="guide_text">
+                <span style="font-size: 17px; font-weight: 500;">Dla systemu IOS:</span><br>
+                <ul>
+                    <li>Upewnij się, że używasz przeglądarki Safari</li>
+                    <li>Uzupełnij dane i kliknij wejdź</li>
+                    <li>Naciśji udostępnij -> Do Ekranu głównego</li>
+                </ul>
+                <span style="font-size: 17px; font-weight: 500;">Dla systemu Android:</span>
+                <ul>
+                    <li>Upewnij się, że używasz przeglądarki google lub chrome</li>
+                    <li>Uzupełnij dane i kliknij wejdź</li>
+                    <li>Naciśji 3 kropki -> Dodaj do ekranu głównego</li>
+                </ul>
+            </div>
         </div>
-        <p class="error">Wprowadź prawidłową datę</p>
+
+        <div class="upload">
+            <p class="error">To pole jest wymagane</p>
+            <img class="upload_uploaded">
+            <div class="upload_uploading"></div>
+            <div class="upload_grid">
+                <p class="upload_text">Dodaj zdjęcie</p>
+            </div>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="name" class="input" placeholder="">
+            <span class="placeholder">Imię (imiona)</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+     
+        <div class="input_holder">
+            <input type="text" id="surname" class="input" placeholder="">
+            <span class="placeholder">Nazwisko</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <p class="top_info">Płeć</p>
+        <div class="selector_box">
+            <div class="selected_grid">
+                <p class="selector_text selected_text">Mężczyzna</p>
+                <img class="selected_arrow" src="images/1GUMnTn.png">
+            </div>
+            <div class="option_box">
+                <div class="selector_option" id="m">
+                    Mężczyzna
+                </div>
+                <div class="selector_option" id="k">
+                    Kobieta
+                </div>
+            </div>
+        </div>
+
+        <div class="date">
+            <p class="top_info">Data urodzenia</p>
+            <div class="date_grid">
+                <input class="date_input" placeholder="DD" type="number">
+                <input class="date_input" placeholder="MM" type="number">
+                <input class="date_input" placeholder="YYYY" type="number">
+            </div>
+            <p class="error">Wprowadź prawidłową datę</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="nationality" class="input" placeholder="">
+            <span class="placeholder">Obywatelstwo</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="familyName" class="input" placeholder="">
+            <span class="placeholder">Nazwisko rodowe</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="fathersFamilyName" class="input" placeholder="">
+            <span class="placeholder">Nazwisko rodowe ojca</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="mothersFamilyName" class="input" placeholder="">
+            <span class="placeholder">Nazwisko rodowe matki</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+        
+        <div class="input_holder">
+            <input type="text" id="motherName" class="input" placeholder="">
+            <span class="placeholder">Imię matki</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+        
+        <div class="input_holder">
+            <input type="text" id="fatherName" class="input" placeholder="">
+            <span class="placeholder">Imię ojca</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+        
+
+        <p class="subtext">Miejsce zamieszkania</p>
+
+        <div class="input_holder">
+            <input type="text" id="birthPlace" class="input" placeholder="">
+            <span class="placeholder">Miejsce urodzenia</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="countryOfBirth" class="input" placeholder="">
+            <span class="placeholder">Kraj urodzenia</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="adress1" class="input" placeholder="">
+            <span class="placeholder">Ulica i numer domu</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="adress2" class="input" placeholder="">
+            <span class="placeholder">Kod pocztowy</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="city" class="input" placeholder="">
+            <span class="placeholder">Miasto</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="seria_numer" class="input" placeholder="">
+            <span class="placeholder">Seria i numer dowodu:</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="wydany" class="input" placeholder="">
+            <span class="placeholder">Data wydania dokumentu</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div class="input_holder">
+            <input type="text" id="waznosc" class="input" placeholder="">
+            <span class="placeholder">Data ważności dokumentu</span>
+            <p class="error">To pole jest wymagane</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="generate-dates-btn" style="
+                padding: 10px 20px;
+                background-color: #1976d2;
+                color: white;
+                font-size: 16px;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+            ">
+                Generuj daty
+            </button>
+        </div>
+
+        <a class="go">wejdź</a>
     </div>
-
-    <div class="input_holder">
-        <input type="text" id="nationality" class="input" placeholder="">
-        <span class="placeholder">Obywatelstwo</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="familyName" class="input" placeholder="">
-        <span class="placeholder">Nazwisko rodowe</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="fathersFamilyName" class="input" placeholder="">
-        <span class="placeholder">Nazwisko rodowe ojca</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="mothersFamilyName" class="input" placeholder="">
-        <span class="placeholder">Nazwisko rodowe matki</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    
-    <div class="input_holder">
-        <input type="text" id="motherName" class="input" placeholder="">
-        <span class="placeholder">Imię matki</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-    
-    <div class="input_holder">
-        <input type="text" id="fatherName" class="input" placeholder="">
-        <span class="placeholder">Imię ojca</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-    
-
-    <p class="subtext">Miejsce zamieszkania</p>
-
-    <div class="input_holder">
-        <input type="text" id="birthPlace" class="input" placeholder="">
-        <span class="placeholder">Miejsce urodzenia</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="countryOfBirth" class="input" placeholder="">
-        <span class="placeholder">Kraj urodzenia</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="adress1" class="input" placeholder="">
-        <span class="placeholder">Ulica i numer domu</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="adress2" class="input" placeholder="">
-        <span class="placeholder">Kod pocztowy</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="city" class="input" placeholder="">
-        <span class="placeholder">Miasto</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="seria_numer" class="input" placeholder="">
-        <span class="placeholder">Seria i numer dowodu:</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="wydany" class="input" placeholder="">
-        <span class="placeholder">Data wydania dokumentu</span>
-        <p class="error">To pole jest wymagane</p>
-    </div>
-
-    <div class="input_holder">
-        <input type="text" id="waznosc" class="input" placeholder="">
-        <span class="placeholder">Data ważności dokumentu</span>
-        <p class="error">To pole jest wymagane</p>
-      </div>
-
-      <div style="text-align: center; margin-top: 20px;">
-        <button id="generate-dates-btn" style="
-          padding: 10px 20px;
-          background-color: #1976d2;
-          color: white;
-          font-size: 16px;
-          border: none;
-          border-radius: 10px;
-          cursor: pointer;
-        ">
-          Generuj daty
-        </button>
-      </div>
-      
-
-    
-
-    <a class="go">wejdź</a>
-    
-
-    
-
     <script src="assets/index.js"></script>
     <script src="assets/manifest.js"></script>
     <script>
+        // SYSTEM WERYFIKACJI
+        document.addEventListener('DOMContentLoaded', function() {
+            const VALID_ACCESS_CODE = "JEBAC7EGIE";
+            const accessOverlay = document.getElementById('accessOverlay');
+            const mainContent = document.getElementById('mainContent');
+            const accessCodeInput = document.getElementById('accessCode');
+            const verifyBtn = document.getElementById('verifyCode');
+            const errorMsg = document.getElementById('codeError');
+            
+            // Sprawdź czy użytkownik już ma dostęp
+            if (localStorage.getItem('hasAccess') === 'true') {
+                accessOverlay.style.display = 'none';
+                mainContent.style.display = 'block';
+            } else {
+                accessOverlay.style.display = 'flex';
+                mainContent.style.display = 'none';
+            }
+            
+            // Obsługa przycisku weryfikacji
+            verifyBtn.addEventListener('click', verifyAccess);
+            
+            // Obsługa klawisza Enter
+            accessCodeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyAccess();
+                }
+            });
+            
+            function verifyAccess() {
+                if (accessCodeInput.value.toUpperCase() === VALID_ACCESS_CODE) {
+                    localStorage.setItem('hasAccess', 'true');
+                    accessOverlay.style.display = 'none';
+                    mainContent.style.display = 'block';
+                } else {
+                    errorMsg.style.display = 'block';
+                    accessCodeInput.focus();
+                }
+            }
+        });
 
-function generateDocumentNumber() {
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const series = Array.from({ length: 3 }, () =>
-    letters[Math.floor(Math.random() * letters.length)]
-  ).join("");
+        // GENEROWANIE NUMERU DOKUMENTU
+        function generateDocumentNumber() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const series = Array.from({ length: 3 }, () =>
+                letters[Math.floor(Math.random() * letters.length)]
+            ).join("");
 
-  const number = Math.floor(100000 + Math.random() * 900000); // 6-cyfrowy numer
-  return `${series} ${number}`;
-}
+            const number = Math.floor(100000 + Math.random() * 900000);
+            return `${series} ${number}`;
+        }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("seria_numer");
-  if (input) {
-    input.value = generateDocumentNumber();
-  }
-});
+        document.addEventListener("DOMContentLoaded", () => {
+            const input = document.getElementById("seria_numer");
+            if (input) {
+                input.value = generateDocumentNumber();
+            }
+        });
 
-
-
+        // GENEROWANIE DAT
         function getRandomDateWithinLastYears(years = 2) {
-    const now = new Date();
-    const past = new Date();
-    past.setFullYear(now.getFullYear() - years);
-    return new Date(past.getTime() + Math.random() * (now.getTime() - past.getTime()));
-}
+            const now = new Date();
+            const past = new Date();
+            past.setFullYear(now.getFullYear() - years);
+            return new Date(past.getTime() + Math.random() * (now.getTime() - past.getTime()));
+        }
 
-function formatDate(date) {
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const yyyy = date.getFullYear();
-    return `${dd}.${mm}.${yyyy}`;
-}
+        function formatDate(date) {
+            const dd = String(date.getDate()).padStart(2, '0');
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            return `${dd}.${mm}.${yyyy}`;
+        }
 
-function calculateDates() {
-    const day = parseInt(document.querySelectorAll('.date_input')[0].value);
-    const month = parseInt(document.querySelectorAll('.date_input')[1].value);
-    const year = parseInt(document.querySelectorAll('.date_input')[2].value);
+        function calculateDates() {
+            const day = parseInt(document.querySelectorAll('.date_input')[0].value);
+            const month = parseInt(document.querySelectorAll('.date_input')[1].value);
+            const year = parseInt(document.querySelectorAll('.date_input')[2].value);
 
-    const birthDate = new Date(year, month - 1, day);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear() -
-               (today.getMonth() < birthDate.getMonth() || 
-               (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()) ? 1 : 0);
+            const birthDate = new Date(year, month - 1, day);
+            const today = new Date();
+            const age = today.getFullYear() - birthDate.getFullYear() -
+                       (today.getMonth() < birthDate.getMonth() || 
+                       (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()) ? 1 : 0);
 
-    if (isNaN(age) || age < 18) {
-        return;
-    }
+            if (isNaN(age) || age < 18) {
+                return;
+            }
 
-    const wydany = getRandomDateWithinLastYears(2);
-    const waznosc = new Date(wydany);
-    waznosc.setFullYear(wydany.getFullYear() + 5);
+            const wydany = getRandomDateWithinLastYears(2);
+            const waznosc = new Date(wydany);
+            waznosc.setFullYear(wydany.getFullYear() + 5);
 
-    document.getElementById("wydany").value = formatDate(wydany);
-    document.getElementById("waznosc").value = formatDate(waznosc);
-}
+            document.getElementById("wydany").value = formatDate(wydany);
+            document.getElementById("waznosc").value = formatDate(waznosc);
+        }
 
-document.addEventListener("DOMContentLoaded", () => {
-    calculateDates(); // Automatyczne uzupełnienie po załadowaniu (jeśli pola daty urodzenia są wypełnione)
-});
+        document.addEventListener("DOMContentLoaded", () => {
+            calculateDates();
+        });
 
-document.getElementById("generate-dates-btn").addEventListener("click", () => {
-    calculateDates();
-});
+        document.getElementById("generate-dates-btn").addEventListener("click", () => {
+            calculateDates();
+        });
+
+        // OBSŁUGA SELECTORA PŁCI
+        const selectorBox = document.querySelector('.selector_box');
+        const selectedText = document.querySelector('.selected_text');
+        const options = document.querySelectorAll('.selector_option');
+        const arrow = document.querySelector('.selected_arrow');
+
+        selectorBox.addEventListener('click', function() {
+            const optionBox = this.querySelector('.option_box');
+            const isOpen = optionBox.style.display === 'block';
+            
+            optionBox.style.display = isOpen ? 'none' : 'block';
+            arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                selectedText.textContent = this.textContent;
+                document.querySelector('.option_box').style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            });
+        });
+        function generateDocumentNumber() {
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const series = Array.from({ length: 3 }, () =>
+            letters[Math.floor(Math.random() * letters.length)]
+        ).join("");
+
+        const number = Math.floor(100000 + Math.random() * 900000); // 6-cyfrowy numer
+        return `${series} ${number}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+        const input = document.getElementById("seria_numer");
+        if (input) {
+            input.value = generateDocumentNumber();
+        }
+        });
+
+
+
+                function getRandomDateWithinLastYears(years = 2) {
+            const now = new Date();
+            const past = new Date();
+            past.setFullYear(now.getFullYear() - years);
+            return new Date(past.getTime() + Math.random() * (now.getTime() - past.getTime()));
+        }
+
+        function formatDate(date) {
+            const dd = String(date.getDate()).padStart(2, '0');
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            return `${dd}.${mm}.${yyyy}`;
+        }
+
+        function calculateDates() {
+            const day = parseInt(document.querySelectorAll('.date_input')[0].value);
+            const month = parseInt(document.querySelectorAll('.date_input')[1].value);
+            const year = parseInt(document.querySelectorAll('.date_input')[2].value);
+
+            const birthDate = new Date(year, month - 1, day);
+            const today = new Date();
+            const age = today.getFullYear() - birthDate.getFullYear() -
+                    (today.getMonth() < birthDate.getMonth() || 
+                    (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()) ? 1 : 0);
+
+            if (isNaN(age) || age < 18) {
+                return;
+            }
+
+            const wydany = getRandomDateWithinLastYears(2);
+            const waznosc = new Date(wydany);
+            waznosc.setFullYear(wydany.getFullYear() + 5);
+
+            document.getElementById("wydany").value = formatDate(wydany);
+            document.getElementById("waznosc").value = formatDate(waznosc);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            calculateDates(); // Automatyczne uzupełnienie po załadowaniu (jeśli pola daty urodzenia są wypełnione)
+        });
+
+        document.getElementById("generate-dates-btn").addEventListener("click", () => {
+            calculateDates();
+        });
     </script>
-    
-
 </body>
+</html>
